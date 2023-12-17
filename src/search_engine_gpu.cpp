@@ -1,16 +1,10 @@
-//
-// Created by Abhinav Chadaga on 11/24/23.
-//
-#include "search_engine_gpu.hpp"
-
-#include <cuda_runtime.h>
-
 #include <algorithm>
-#include <chrono>
+#include <cuda_runtime.h>
 #include <iostream>
 
 #include "json.hpp"
 #include "query_kernel.h"
+#include "search_engine_gpu.hpp"
 
 using json = nlohmann::json;
 

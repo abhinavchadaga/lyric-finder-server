@@ -1,10 +1,11 @@
 # syntax=docker/dockerfile:1
-FROM gcc:13.2.0-bookworm AS builder
+FROM nvidia/cuda:11.7.1-devel-ubuntu22.04 AS builder
 
 # install build dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     cmake \
+    git \
     gdb \
     libboost-all-dev
 

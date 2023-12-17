@@ -41,7 +41,6 @@ class search_engine_gpu final : public ISearchEngine {
   el::Logger *m_logger;
 
   std::vector<song> query_internal(const std::string &lyric_to_find) override;
-  void launch_search_kernel(const char *lyric_to_find);
 };
 
 #endif  // LYRIC_FINDER_BACKEND_INCLUDE_SEARCH_ENGINE_GPU_HPP_

@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <thrust/device_vector.h>
 #include <thrust/fill.h>
 #include <thrust/remove.h>
@@ -91,7 +91,7 @@ launch_query_kernel (const char *lyric_to_search, int lyric_len,
   cudaEventCreate (&kernel_stop);
 
   cudaEventRecord (kernel_start);
-  query_kernel<<<num_blocks, threads_per_block> > > (
+  query_kernel<<<num_blocks, threads_per_block>>> (
 	  d_lyric_to_search, d_lyrics, d_song_indices, num_songs,
 	  thrust::raw_pointer_cast (d_results.data ()));
   cudaEventRecord (kernel_stop);

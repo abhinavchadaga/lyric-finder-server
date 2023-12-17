@@ -11,6 +11,6 @@
 **/docker-compose*
 **/compose*
 **/Dockerfile*
-./cmake-build**
+**/*build*
 **/.clang-format
 README.md
