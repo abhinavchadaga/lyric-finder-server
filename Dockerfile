@@ -25,37 +25,38 @@ COPY . .
 # Build the application
 RUN mkdir build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. && \
     cmake --build .
 
-ENTRYPOINT ["build/server"]
-
 #################################################################################
-#FROM alpine:3.19.0 AS runtime
-#
+FROM nvidia/cuda:11.7.1-runtime-ubuntu22.04 AS runtime
+
 ### Create a non-privileged user that the app will run under.
 ### See https://docs.docker.com/go/dockerfile-user-best-practices/
-#ARG UID=10001
-#RUN adduser \
-#    --disabled-password \
-#    --gecos "" \
-#    --home "/nonexistent" \
-#    --shell "/sbin/nologin" \
-#    --no-create-home \
-#    --uid "${UID}" \
-#    appuser
-#
-## Set the working directory
-#WORKDIR /app
-#
-### Copy the executable from the "build" stage.
-#COPY --from=builder /app/build/server /app/
-#
-## Set permissions
-#RUN chown appuser:appuser /app/server && \
-#    chmod +x /app/server  # Ensure the server is executable
-#
-#USER appuser
-#
-## Set the entrypoint to your application executable
-#ENTRYPOINT ["/app/server"]
+ARG UID=10001
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    appuser
+
+# Set the working directory
+WORKDIR /app
+
+## Copy executable and db file from builder stage
+COPY --from=builder /app/build/server /app/
+COPY --from=builder /app/db/ /app/db/
+
+# Set permissions
+RUN chown appuser:appuser /app/server && \
+    chmod +x /app/server
+
+USER appuser
+
+EXPOSE 8000
+
+# Set the entrypoint to your application executable
+ENTRYPOINT ["/app/server"]

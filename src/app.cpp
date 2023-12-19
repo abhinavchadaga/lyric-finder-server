@@ -1,19 +1,19 @@
-#include <oatpp/core/macro/component.hpp>
 #include <string>
 
 #include "app_component.hpp"
 #include "controller/controller.hpp"
 #include "easylogging++.h"
 #include "engine/search_engine_gpu.hpp"
+#include "oatpp/core/macro/component.hpp"
 #include "oatpp/network/Server.hpp"
 
 INITIALIZE_EASYLOGGINGPP
 
 // cwd in docker container is /app
-const char *path_to_json = "../db/db.jsonl";
+const char *const path_to_json = "./db/db.jsonl";
 
 void run() {
-  app_component components;
+  const app_component components;
   auto logger = el::Loggers::getLogger("lyric-finder-server");
 
   // initialize controller
