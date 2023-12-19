@@ -7,8 +7,7 @@
 
 #include <cuda_runtime.h>
 
-#include <ISearchEngine.hpp>
-
+#include "ISearchEngine.hpp"
 #include "song.hpp"
 
 #define gpuErrchk(ans) \
@@ -30,7 +29,7 @@ class search_engine_gpu final : public ISearchEngine {
   el::Logger *get_logger() override;
 
  private:
-  std::vector<song_metadata> m_db;
+  std::vector<song> m_db;
   // host copies
   char *h_lyrics;
   int *h_song_indices;

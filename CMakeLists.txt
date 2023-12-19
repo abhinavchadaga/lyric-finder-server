@@ -13,13 +13,17 @@ include_directories(include)
 include_directories(third-party)
 include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
-set(SOURCE_FILES src/server.cpp
+set(SOURCE_FILES src/app.cpp
         third-party/easylogging++.cc
-        src/ISearchEngine.cpp
-        src/search_engine_cpu.cpp
-        src/song.cpp
-        src/search_engine_gpu.cpp
-        src/query_kernel.cu)
+        src/engine/ISearchEngine.cpp
+        src/engine/search_engine_cpu.cpp
+        src/engine/song.cpp
+        src/engine/search_engine_gpu.cpp
+        src/engine/query_kernel.cu
+        include/dto/song.hpp
+        include/controller/controller.hpp
+        include/dto/lyric.hpp
+        include/dto/song_list.hpp)
 
 add_executable(server ${SOURCE_FILES})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CUDA_STANDARD_LIBRARIES} oatpp::oatpp)

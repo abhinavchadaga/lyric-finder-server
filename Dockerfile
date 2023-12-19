@@ -7,7 +7,8 @@ RUN apt-get update && \
     cmake \
     git \
     gdb \
-    libboost-all-dev
+    libboost-all-dev \
+    ninja-build
 
 # install oat++
 RUN git clone https://github.com/oatpp/oatpp.git \
@@ -27,7 +28,7 @@ RUN mkdir build && \
     cmake -DCMAKE_BUILD_TYPE=Release .. && \
     cmake --build .
 
-ENTRYPOINT ["/app/build/server"]
+ENTRYPOINT ["build/server"]
 
 #################################################################################
 #FROM alpine:3.19.0 AS runtime

@@ -13,4 +13,5 @@
 **/Dockerfile*
 **/*build*
 **/.clang-format
+.cache
 README.md
