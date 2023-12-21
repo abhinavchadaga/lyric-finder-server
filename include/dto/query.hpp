@@ -10,12 +10,14 @@
 
 #include OATPP_CODEGEN_BEGIN(DTO)
 
-class lyric_dto : public oatpp::DTO {
-    DTO_INIT(lyric_dto, DTO)
+class query_dto : public oatpp::DTO {
+  DTO_INIT(query_dto, DTO)
 
-    DTO_FIELD(String, lyric);
+  DTO_FIELD(String, lyric);
+  DTO_FIELD(UInt32, page_number) = 1;
+  DTO_FIELD(UInt32, page_size) = 6;
 };
 
 #include OATPP_CODEGEN_END(DTO)
 
-#endif //SERVER_LYRIC_HPP
+#endif  // SERVER_LYRIC_HPP

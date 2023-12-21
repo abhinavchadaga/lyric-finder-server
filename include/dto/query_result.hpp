@@ -12,10 +12,11 @@
 
 #include OATPP_CODEGEN_BEGIN(DTO)
 
-class songs_list_dto : public oatpp::DTO {
-  DTO_INIT(songs_list_dto, DTO)
+class query_result : public oatpp::DTO {
+  DTO_INIT(query_result, DTO)
 
   DTO_FIELD(Vector<Object<song_dto>>, songs);
+  DTO_FIELD(UInt32, total_pages);
 };
 
 #include OATPP_CODEGEN_END(DTO)

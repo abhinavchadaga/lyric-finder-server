@@ -1,30 +1,53 @@
 cmake_minimum_required(VERSION 3.22)
-project(server LANGUAGES CXX CUDA)
+project(lyric-finder-server LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CUDA_STANDARD 14)
-set(CMAKE_CUDA_STANDARD_REQUIRED ON)
 
-find_package(oatpp 1.3.0 REQUIRED)
+# install oat++
+include(FetchContent)
+FetchContent_Declare(
+        oatpp
+        GIT_REPOSITORY https://github.com/oatpp/oatpp.git
+        GIT_TAG 1.3.0
+)
+FetchContent_MakeAvailable(oatpp)
 
-# headers
-include_directories(include)
-include_directories(third-party)
-include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
+
+find_package(CUDAToolkit)
+
+if (CUDAToolkit_FOUND)
+    enable_language(CUDA)
+    message(STATUS "CUDA found, compiling with GPU support")
+    set(CMAKE_CUDA_STANDARD 14)
+    set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+    add_definitions(-DUSE_CUDA)
+else ()
+    message(STATUS "CUDA not found, compiling without GPU support")
+endif ()
 
 set(SOURCE_FILES src/app.cpp
         third-party/easylogging++.cc
         src/engine/ISearchEngine.cpp
         src/engine/search_engine_cpu.cpp
         src/engine/song.cpp
-        src/engine/search_engine_gpu.cpp
-        src/engine/query_kernel.cu
-        include/dto/song.hpp
-        include/controller/controller.hpp
-        include/dto/lyric.hpp
-        include/dto/song_list.hpp)
+        src/engine/cache.cpp
+        include/engine/cache.hpp
+)
 
-add_executable(server ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_CUDA_STANDARD_LIBRARIES} oatpp::oatpp)
-set_target_properties(server PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+if (CUDAToolkit_FOUND)
+    list(APPEND SOURCE_FILES
+            src/engine/search_engine_gpu.cpp
+            src/engine/query_kernel.cu)
+endif ()
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+target_include_directories(${PROJECT_NAME} PRIVATE include third-party)
+
+if (CUDAToolkit_FOUND)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CUDAToolkit_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${CUDAToolkit_LIBRARY_DIRS})
+    set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+endif ()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE oatpp)
