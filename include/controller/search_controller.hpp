@@ -1,7 +1,3 @@
-//
-// Created by abhinavchadaga on 12/18/23.
-//
-
 #ifndef SERVER_CONTROLLER_HPP
 #define SERVER_CONTROLLER_HPP
 
@@ -19,15 +15,23 @@
 
 #include OATPP_CODEGEN_BEGIN(ApiController)
 
-class controller : public oatpp::web::server::api::ApiController {
+class search_controller : public oatpp::web::server::api::ApiController {
  public:
-  explicit controller(
+  explicit search_controller(
       OATPP_COMPONENT(
           std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>,
           object_mapper),
-      std::shared_ptr<ISearchEngine> e = nullptr)
+      OATPP_COMPONENT(std::shared_ptr<ISearchEngine>, search_engine))
       : oatpp::web::server::api::ApiController(object_mapper),
-        m_search_engine(std::move(e)) {}
+        m_search_engine(search_engine) {}
+
+  static std::shared_ptr<search_controller> createShared(
+      OATPP_COMPONENT(
+          std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>,
+          object_mapper),
+      OATPP_COMPONENT(std::shared_ptr<ISearchEngine>, search_engine)) {
+    return std::make_shared<search_controller>(object_mapper, search_engine);
+  }
 
   ADD_CORS(query)
   ENDPOINT("POST", "/query", query, BODY_DTO(Object<query_dto>, q_dto)) {

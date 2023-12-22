@@ -7,10 +7,14 @@
 
 #include <memory>
 
+#include "engine/ISearchEngine.hpp"
+#include "engine/search_engine_cpu.hpp"
+#include "oatpp/core/Types.hpp"
 #include "oatpp/core/macro/component.hpp"
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
 #include "oatpp/web/server/HttpConnectionHandler.hpp"
+#include "static_files_manager/static_files_manager.hpp"
 
 class app_component {
   OATPP_CREATE_COMPONENT(
@@ -36,6 +40,21 @@ class app_component {
       std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>,
       apiObjectMapper)
   ([] { return oatpp::parser::json::mapping::ObjectMapper::createShared(); }());
-};
 
+  OATPP_CREATE_COMPONENT(std::shared_ptr<ISearchEngine>, search_engine)
+  ([] {
+    const char* const path_to_json = "../db/db.jsonl";
+#ifdef USE_CUDA
+    return std::make_shared<search_engine_gpu>(path_to_json);
+#else
+    return std::make_shared<search_engine_cpu>(path_to_json, 8);
+#endif
+  }());
+
+  OATPP_CREATE_COMPONENT(std::shared_ptr<static_files_manager>, file_manager)
+  ([] {
+    oatpp::String path_to_static_files{"../dist/"};
+    return std::make_shared<static_files_manager>(path_to_static_files);
+  }());
+};
 #endif  // SERVER_APP_COMPONENT_HPP

@@ -16,8 +16,8 @@ class ISearchEngine {
   ISearchEngine() = default;
   virtual ~ISearchEngine() = default;
   const db &query(const std::string &lyric_to_find);
-  [[nodiscard]] std::pair<db::const_iterator, db::const_iterator> get_page_range(
-      size_t page_number, size_t page_size) const;
+  [[nodiscard]] std::pair<db::const_iterator, db::const_iterator>
+  get_page_range(size_t page_number, size_t page_size) const;
 
  protected:
   virtual db query_internal(const std::string &lyric_to_find) = 0;

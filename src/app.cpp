@@ -2,7 +2,8 @@
 #include <string>
 
 #include "app_component.hpp"
-#include "controller/controller.hpp"
+#include "controller/search_controller.hpp"
+#include "controller/static_controller.hpp"
 #include "easylogging++.h"
 #ifdef USE_CUDA
 #include "engine/search_engine_gpu.hpp"
@@ -20,18 +21,12 @@ const char *const path_to_json = "../db/db.jsonl";
 void run() {
   const app_component components;
   auto logger = el::Loggers::getLogger("lyric-finder-server");
-
   // initialize controller
-#ifdef USE_CUDA
-  auto engine = std::make_shared<search_engine_gpu>(path_to_json);
-#else
-  auto engine = std::make_shared<search_engine_cpu>(path_to_json, 8);
-#endif
-  OATPP_COMPONENT(std::shared_ptr<oatpp::parser::json::mapping::ObjectMapper>,
-                  json_mapper);
   OATPP_COMPONENT(std::shared_ptr<oatpp::web::server::HttpRouter>, router);
-  auto search_controller = std::make_shared<controller>(json_mapper, engine);
-  router->addController(search_controller);
+  OATPP_COMPONENT(std::shared_ptr<static_files_manager>, file_manager);
+  // add controllers
+  router->addController(search_controller::createShared());
+  router->addController(static_controller::createShared());
 
   // configure and start server
   OATPP_COMPONENT(std::shared_ptr<oatpp::network::ConnectionHandler>,
