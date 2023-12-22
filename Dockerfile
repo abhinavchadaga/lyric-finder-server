@@ -15,8 +15,8 @@ WORKDIR /app
 COPY . .
 
 # Build the application
-RUN mkdir build && \
-    cd build && \
+RUN mkdir Release && \
+    cd Release && \
     cmake -DCMAKE_BUILD_TYPE=Release -G Ninja .. && \
     cmake --build .
 
@@ -39,16 +39,18 @@ RUN adduser \
 WORKDIR /app
 
 ## Copy executable and db file from builder stage
-COPY --from=builder /app/build/server /app/build
+COPY --from=builder /app/Release/lyric-finder-server /app/Release/lyric-finder-server
 COPY --from=builder /app/db/ /app/db/
 
 # Set permissions
-RUN chown appuser:appuser /app/server && \
-    chmod +x /app/server
+RUN chown appuser:appuser /app/Release/lyric-finder-server && \
+    chmod +x /app/Release/lyric-finder-server
 
 USER appuser
 
 EXPOSE 8000
 
+WORKDIR /app/Release/
+
 # Set the entrypoint to your application executable
-ENTRYPOINT ["/app/build/server"]
+ENTRYPOINT ["/app/Release/lyric-finder-server"]
