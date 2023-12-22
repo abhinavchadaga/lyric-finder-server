@@ -28,6 +28,7 @@ class controller : public oatpp::web::server::api::ApiController {
       : oatpp::web::server::api::ApiController(object_mapper),
         m_search_engine(std::move(e)) {}
 
+  ADD_CORS(query)
   ENDPOINT("POST", "/query", query, BODY_DTO(Object<query_dto>, q_dto)) {
     std::string lyric_to_search = q_dto->lyric;
     auto result = m_search_engine->query(lyric_to_search);

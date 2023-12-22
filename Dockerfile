@@ -10,14 +10,6 @@ RUN apt-get update && \
     libboost-all-dev \
     ninja-build
 
-# install oat++
-RUN git clone https://github.com/oatpp/oatpp.git \
-    && cd oatpp \
-    && mkdir build \
-    && cd build \
-    && cmake -DCMAKE_BUILD_TYPE=Release -DOATPP_BUILD_TESTS=OFF .. \
-    && make install
-
 # copy source code
 WORKDIR /app
 COPY . .
@@ -47,7 +39,7 @@ RUN adduser \
 WORKDIR /app
 
 ## Copy executable and db file from builder stage
-COPY --from=builder /app/build/server /app/
+COPY --from=builder /app/build/server /app/build
 COPY --from=builder /app/db/ /app/db/
 
 # Set permissions
@@ -59,4 +51,4 @@ USER appuser
 EXPOSE 8000
 
 # Set the entrypoint to your application executable
-ENTRYPOINT ["/app/server"]
+ENTRYPOINT ["/app/build/server"]
