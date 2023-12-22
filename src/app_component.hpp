@@ -8,7 +8,12 @@
 #include <memory>
 
 #include "engine/ISearchEngine.hpp"
+#ifdef USE_CUDA
+#include "engine/search_engine_gpu.hpp"
+#else
 #include "engine/search_engine_cpu.hpp"
+#endif
+#include "engine/search_engine_gpu.hpp"
 #include "oatpp/core/Types.hpp"
 #include "oatpp/core/macro/component.hpp"
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"

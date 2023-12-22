@@ -41,6 +41,7 @@ WORKDIR /app
 ## Copy executable and db file from builder stage
 COPY --from=builder /app/Release/lyric-finder-server /app/Release/lyric-finder-server
 COPY --from=builder /app/db/ /app/db/
+COPY --from=builder /app/dist/ /app/dist/
 
 # Set permissions
 RUN chown appuser:appuser /app/Release/lyric-finder-server && \
