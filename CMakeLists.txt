@@ -20,6 +20,7 @@ endif()
 
 set(OATPP_BUILD_TESTS OFF CACHE INTERNAL "")
 
+# find CUDA
 find_package(CUDAToolkit)
 
 if(CUDAToolkit_FOUND)
@@ -47,6 +48,8 @@ if(CUDAToolkit_FOUND)
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
+# add the include and third_party directories
 target_include_directories(${PROJECT_NAME} PRIVATE include third-party)
 
 if(CUDAToolkit_FOUND)

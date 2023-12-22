@@ -5,12 +5,13 @@
 #ifndef SERVER_CONTROLLER_HPP
 #define SERVER_CONTROLLER_HPP
 
+#include <cmath>
 #include <memory>
 
-#include "../engine/ISearchEngine.hpp"
 #include "dto/query.hpp"
 #include "dto/query_result.hpp"
 #include "dto/song.hpp"
+#include "engine/ISearchEngine.hpp"
 #include "oatpp/core/macro/codegen.hpp"
 #include "oatpp/core/macro/component.hpp"
 #include "oatpp/parser/json/mapping/ObjectMapper.hpp"
