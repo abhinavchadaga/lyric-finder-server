@@ -1,5 +1,4 @@
 #include <memory>
-#include <string>
 
 #include "app_component.hpp"
 #include "controller/search_controller.hpp"
