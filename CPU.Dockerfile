@@ -1,13 +1,14 @@
-# syntax=docker/dockerfile:1
-FROM nvidia/cuda:11.7.1-devel-ubuntu22.04 AS builder
+FROM ubuntu:22.04 as builder
+LABEL authors="achadaga"
 
-# install build dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    build-essential \
     cmake \
     git \
     gdb \
     libboost-all-dev \
+    ca-certificates \
     ninja-build
 
 # copy source code
@@ -21,7 +22,7 @@ RUN mkdir Release && \
     cmake --build .
 
 #################################################################################
-FROM nvidia/cuda:11.7.1-runtime-ubuntu22.04 AS runtime
+FROM ubuntu:22.04 AS runtime
 
 ### Create a non-privileged user that the app will run under.
 ### See https://docs.docker.com/go/dockerfile-user-best-practices/
