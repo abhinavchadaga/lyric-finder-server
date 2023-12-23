@@ -4,6 +4,9 @@ project(lyric-finder-server LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# find boost program options
+find_package(Boost REQUIRED COMPONENTS program_options)
+
 # install oat++
 include(FetchContent)
 FetchContent_Declare(
@@ -59,4 +62,4 @@ if (CUDAToolkit_FOUND)
     set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 endif ()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE oatpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE oatpp Boost::program_options)

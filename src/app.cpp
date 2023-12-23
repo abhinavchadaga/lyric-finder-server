@@ -1,3 +1,4 @@
+#include <boost/program_options.hpp>
 #include <memory>
 
 #include "app_component.hpp"
@@ -17,9 +18,10 @@ INITIALIZE_EASYLOGGINGPP
 // cwd in docker container is /app
 const char *const path_to_json = "../db/db.jsonl";
 
-void run() {
-  const app_component components;
+void run(bool use_gpu, size_t nthreads) {
+  const app_component components{use_gpu, nthreads};
   auto logger = el::Loggers::getLogger("lyric-finder-server");
+
   // initialize controller
   OATPP_COMPONENT(std::shared_ptr<oatpp::web::server::HttpRouter>, router);
   OATPP_COMPONENT(std::shared_ptr<static_files_manager>, file_manager);
@@ -41,8 +43,25 @@ void run() {
 }
 
 int main(int argc, char *argv[]) {
+  namespace po = boost::program_options;
+  bool use_gpu;
+  size_t nthreads = 0;
+  po::options_description desc("Allowed options");
+  desc.add_options()("help", "produce help message")(
+      "gpu,g", po::bool_switch(&use_gpu), "use gpu")(
+      "threads,t", po::value<size_t>(&nthreads), "number of threads");
+  po::variables_map vm;
+  po::store(po::parse_command_line(argc, argv, desc), vm);
+  po::notify(vm);
+#ifndef USE_CUDA
+  if (use_gpu) {
+    std::cerr << "GPU support not compiled in" << std::endl;
+    return 1;
+  }
+  use_gpu = false;
+#endif
   oatpp::base::Environment::init();
-  run();
+  run(use_gpu, nthreads);
   oatpp::base::Environment::destroy();
   return 0;
 }

@@ -1,7 +1,6 @@
 //
 // Created by abhinavchadaga on 12/18/23.
 //
-
 #ifndef SERVER_APP_COMPONENT_HPP
 #define SERVER_APP_COMPONENT_HPP
 
@@ -21,6 +20,14 @@
 #include "static_files_manager/static_files_manager.hpp"
 
 class app_component {
+ public:
+  app_component(bool use_gpu, size_t nthreads)
+      : m_use_gpu(use_gpu), m_nthreads(nthreads) {}
+
+ private:
+  bool m_use_gpu;
+  size_t m_nthreads;
+
   OATPP_CREATE_COMPONENT(
       std::shared_ptr<oatpp::network::ServerConnectionProvider>,
       serverConnectionProvider)
@@ -46,12 +53,16 @@ class app_component {
   ([] { return oatpp::parser::json::mapping::ObjectMapper::createShared(); }());
 
   OATPP_CREATE_COMPONENT(std::shared_ptr<ISearchEngine>, search_engine)
-  ([] {
+  ([this] {
     const char* const path_to_json = "../db/db.jsonl";
 #ifdef USE_CUDA
-    return std::make_shared<search_engine_gpu>(path_to_json);
+    if (m_use_gpu) {
+      return std::make_shared<search_engine_gpu>(path_to_json);
+    } else {
+      return std::make_shared<search_engine_cpu>(path_to_json, m_nthreads);
+    }
 #else
-    return std::make_shared<search_engine_cpu>(path_to_json, 8);
+    return std::make_shared<search_engine_cpu>(path_to_json, m_nthreads);
 #endif
   }());
 
