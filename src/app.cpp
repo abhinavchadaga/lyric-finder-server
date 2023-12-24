@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
   po::options_description desc("Allowed options");
   desc.add_options()("help", "produce help message")(
       "gpu,g", po::bool_switch(&use_gpu), "use gpu")(
-      "threads,t", po::value<size_t>(&nthreads), "number of threads");
+      "threads,t", po::value<size_t>(&nthreads), "number of threads to use (cpu only)");
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
   po::notify(vm);
@@ -59,6 +59,11 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   use_gpu = false;
+#endif
+#ifdef USE_CUDA
+  if (use_gpu && nthreads > 0) {
+    LOG(WARNING) << "GPU support enabled, ignoring number of threads";
+  }
 #endif
   oatpp::base::Environment::init();
   run(use_gpu, nthreads);

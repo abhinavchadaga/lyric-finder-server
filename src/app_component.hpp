@@ -9,9 +9,8 @@
 #include "engine/ISearchEngine.hpp"
 #ifdef USE_CUDA
 #include "engine/search_engine_gpu.hpp"
-#else
-#include "engine/search_engine_cpu.hpp"
 #endif
+#include "engine/search_engine_cpu.hpp"
 #include "oatpp/core/Types.hpp"
 #include "oatpp/core/macro/component.hpp"
 #include "oatpp/network/tcp/server/ConnectionProvider.hpp"
@@ -55,15 +54,17 @@ class app_component {
   OATPP_CREATE_COMPONENT(std::shared_ptr<ISearchEngine>, search_engine)
   ([this] {
     const char* const path_to_json = "../db/db.jsonl";
+    std::shared_ptr<ISearchEngine> engine;
 #ifdef USE_CUDA
     if (m_use_gpu) {
-      return std::make_shared<search_engine_gpu>(path_to_json);
+      engine = std::make_shared<search_engine_gpu>(path_to_json);
     } else {
-      return std::make_shared<search_engine_cpu>(path_to_json, m_nthreads);
+      engine = std::make_shared<search_engine_cpu>(path_to_json, m_nthreads);
     }
 #else
-    return std::make_shared<search_engine_cpu>(path_to_json, m_nthreads);
+    engine =  std::make_shared<search_engine_cpu>(path_to_json, m_nthreads);
 #endif
+    return engine;
   }());
 
   OATPP_CREATE_COMPONENT(std::shared_ptr<static_files_manager>, file_manager)
