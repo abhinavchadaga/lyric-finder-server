@@ -15,6 +15,7 @@ class query_result : public oatpp::DTO {
   DTO_INIT(query_result, DTO)
 
   DTO_FIELD(Vector<Object<song_dto>>, songs);
+  DTO_FIELD(UInt32, num_results);
   DTO_FIELD(UInt32, total_pages);
 };
 

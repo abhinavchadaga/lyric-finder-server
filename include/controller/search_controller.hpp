@@ -50,6 +50,7 @@ class search_controller : public oatpp::web::server::api::ApiController {
                      songDto->album = song.get_album();
                      return songDto;
                    });
+    out->num_results = static_cast<uint32_t>(result.size());
     out->total_pages = static_cast<uint32_t>(
         std::ceil(static_cast<double>(result.size()) / q_dto->page_size));
     return createDtoResponse(Status::CODE_200, out);
